@@ -1,15 +1,15 @@
 package middleware
 
 import (
-	"jwtLogin/internal/model"
+	"JWTLogin/internal/model"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 )
 
 var (
-	secretKey        = []byte("your-secret-key")
-	refreshSecretKey = []byte("your-refresh-secret-key")
+	SecretKey        = []byte("secret")
+	RefreshSecretKey = []byte("refresh")
 )
 
 func generateToken(user model.Users, key []byte, expiration time.Duration) (string, error) {
@@ -28,11 +28,11 @@ func generateToken(user model.Users, key []byte, expiration time.Duration) (stri
 }
 
 func CreateTokens(user model.Users) (model.Tokens, error) {
-	accessToken, err := generateToken(user, secretKey, time.Hour*24)
+	accessToken, err := generateToken(user, SecretKey, time.Hour*24)
 	if err != nil {
 		return model.Tokens{}, err
 	}
-	refreshToken, err := generateToken(user, refreshSecretKey, time.Hour*24*30)
+	refreshToken, err := generateToken(user, RefreshSecretKey, time.Hour*24*30)
 	if err != nil {
 		return model.Tokens{}, err
 	}

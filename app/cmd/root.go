@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"JWTLogin/app/config"
+	"JWTLogin/internal/repository"
+	"JWTLogin/internal/rest/user"
 	"fmt"
-	"jwtLogin/app/config"
-	"jwtLogin/internal/rest/user"
-	service "jwtLogin/service/user"
+
+	service "JWTLogin/service/user"
+
 	"os"
 
 	"github.com/jmoiron/sqlx"
@@ -20,8 +23,9 @@ var (
 	}
 )
 var (
-	rootConfig  config.Root
-	database    *sqlx.DB
+	rootConfig config.Root
+	database   *sqlx.DB
+
 	userHandler user.UserHandler
 )
 
@@ -34,6 +38,13 @@ func Execute() {
 	}
 }
 
+func init() {
+	cobra.OnInitialize(func() {
+		initConfigReader()
+		initPostGresDB()
+		initApp()
+	})
+}
 func initPostGresDB() {
 	var err error
 	log.Infof("Initialize Postgres Connection")
@@ -51,9 +62,13 @@ func initPostGresDB() {
 	}
 }
 func initConfigReader() {
+	log.Infof("Initialize ENV")
 	rootConfig = config.Load(EnvFilePath)
 }
 
 func initApp() {
-	userHandler = *user.NewUserHandler(*service.NewUserService())
+	log.Infof("Initialize App")
+	userRepo := repository.NewRepository(database)
+	userServise := service.NewUserService(*userRepo)
+	userHandler = *user.NewUserHandler(*userServise)
 }
