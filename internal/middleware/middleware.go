@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/golang-jwt/jwt"
@@ -21,7 +22,8 @@ func AuthMiddleware(role string) echo.MiddlewareFunc {
 				return c.JSON(http.StatusForbidden, errors.New("unauthorize"))
 			}
 			claims, ok := token.Claims.(jwt.MapClaims)
-			if ok || claims["role"] == role {
+			if ok && claims["role"] == role {
+				fmt.Println(claims["role"])
 				return Next(c)
 			}
 			return c.JSON(http.StatusForbidden, errors.New("unauthorize"))

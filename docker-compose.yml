@@ -1,0 +1,29 @@
+version: '3'
+services:
+  my-postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "${POSTGRES_DATABASE}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:8080"
+    environment:
+      ENV: "${ENV}"
+      POSTGRES_HOST: "${POSTGRES_HOST}"
+      POSTGRES_PORT: "${POSTGRES_PORT}"
+      POSTGRES_DATABASE: "${POSTGRES_DATABASE}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      DB_MAX_CONN_LIFE_TIME: "${DB_MAX_CONN_LIFE_TIME}"
+      DB_MAX_OPEN_CONNECTION: "${DB_MAX_OPEN_CONNECTION}"
+      DB_MAX_IDLE_CONNECTION: "${DB_MAX_IDLE_CONNECTION}"
+      CONTEXT_TIMEOUT: "${CONTEXT_TIMEOUT}"
+    depends_on:
+      - my-postgres
+  
